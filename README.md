@@ -1,2 +1,4 @@
-# fraud-analytics-system
-In progress
+# Fraud Analytics Project
+
+## Status
+🚧 In Progress
