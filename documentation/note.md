@@ -1,5 +1,6 @@
-The documentation for each step as the project progresses will be added.
+## The documentation for each step as the project progresses will be added.
 
-STEP 1 - PROJECT PLANNING & DATASET SELECTION 
-STEP 2 - DATA UNDERSTANDING & INITIAL EXPLORATION (01_Data_Understanding_EDA.ipynb)
-STEP 3 - FEATURE ENGINEERING & PREPROCESSING (02_Feature_Engineering_Preprocessing.ipynb)
+- STEP 1 - PROJECT PLANNING & DATASET SELECTION 
+- STEP 2 - DATA UNDERSTANDING & INITIAL EXPLORATION (01_Data_Understanding_EDA.ipynb)
+- STEP 3 - FEATURE ENGINEERING & PREPROCESSING (02_Feature_Engineering_Preprocessing.ipynb)
+- STEP 4 - MACHINE LEARNING FRAUD DETECTION (03_Machine_Learning_Fraud_Detection.ipynb)
