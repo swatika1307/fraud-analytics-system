@@ -5,3 +5,4 @@
 - STEP 3 - FEATURE ENGINEERING & PREPROCESSING (02_Feature_Engineering_Preprocessing.ipynb)
 - STEP 4 - MACHINE LEARNING FRAUD DETECTION (03_Machine_Learning_Fraud_Detection.ipynb)
 - STEP 5 - RISK SCORING & ALERT GENERATION (04_Risk_Scoring_Alerts.ipynb)
+- STEP 6 - STEP 6 — MYSQL DATABASE STORAGE (05_MySQL_Database_Storage.ipynb)
