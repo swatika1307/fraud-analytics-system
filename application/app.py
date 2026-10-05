@@ -1,6 +1,6 @@
 from db import run_query
 import streamlit as st
-
+import plotly.express as px
 
 # --------------------------------------------------
 # PAGE CONFIGURATION
@@ -115,7 +115,43 @@ if page == "Executive Overview":
                 y="fraud_transactions"
             )
 
+    with col2:
 
+        st.subheader("Risk Category Distribution")
+
+        risk_query = """
+        SELECT
+            risk_category,
+            SUM(transaction_count) AS transaction_count
+        FROM vw_risk_analysis
+        GROUP BY risk_category
+        ORDER BY transaction_count DESC
+        """
+
+        risk_data = run_query(risk_query)
+
+        if not risk_data.empty:
+            fig = px.pie(
+                risk_data,
+                names="risk_category",
+                values="transaction_count",
+                hole=0.55
+            )
+
+            fig.update_traces(
+                textposition="inside",
+                textinfo="percent+label"
+            )
+
+            fig.update_layout(
+                showlegend=True,
+                margin=dict(t=20, b=20, l=20, r=20)
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
 
 
 
