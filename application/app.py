@@ -153,6 +153,39 @@ if page == "Executive Overview":
                 use_container_width=True
             )
 
+    with col3:
+
+        st.subheader("Top 10 States by Fraud Transactions")
+
+        state_query = """
+        SELECT *
+        FROM vw_geographic_analysis
+        ORDER BY fraud_transactions DESC
+        LIMIT 10
+        """
+
+        state_data = run_query(state_query)
+
+        if not state_data.empty:
+
+            fig = px.bar(
+                state_data,
+                x="fraud_transactions",
+                y="state",
+                orientation="h"
+            )
+
+            fig.update_layout(
+                yaxis={"categoryorder": "total ascending"},
+                xaxis_title="Fraud Transactions",
+                yaxis_title="State"
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
 
 
 
