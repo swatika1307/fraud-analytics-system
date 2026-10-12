@@ -212,17 +212,159 @@ if page == "Executive Overview":
                 use_container_width=True
             )
     
-
-
-
-
-
-
-
-
 elif page == "Fraud Analysis":
     st.header("Fraud Analysis")
     st.write("Category, geographic, and demographic fraud analysis.")
+
+    st.subheader("Fraud Percentage by Category")
+    category_query = """
+    SELECT
+        category,
+        fraud_rate_percentage
+    FROM vw_category_analysis
+    ORDER BY fraud_rate_percentage DESC
+    """
+    category_data = run_query(category_query)
+    if not category_data.empty:
+        fig = px.bar(
+            category_data,
+            x="fraud_rate_percentage",
+            y="category",
+            orientation="h",
+            text="fraud_rate_percentage"
+        )
+        fig.update_traces(
+            marker_color="#A8323E",
+            texttemplate="%{text:.1f}",
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "Category: %{y}<br>"
+                "Fraud Percentage: %{x:.2f}%"
+                "<extra></extra>"
+            )
+        )
+        fig.update_layout(
+            xaxis_title="Fraud Percentage (%)",
+            yaxis_title="",
+            yaxis={
+                "categoryorder": "total ascending"
+            },
+            showlegend=False,
+            margin=dict(l=10, r=40, t=20, b=20)
+        )
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+    else:
+        st.info("No category fraud data available.")
+
+    
+    st.subheader("Fraud Value by Category")
+
+    fraud_value_query = """
+    SELECT
+        category,
+        total_fraud_value
+    FROM vw_category_analysis
+    ORDER BY total_fraud_value DESC
+    """
+
+    fraud_value_data = run_query(fraud_value_query)
+
+    if not fraud_value_data.empty:
+        fig = px.bar(
+            fraud_value_data,
+            x="total_fraud_value",
+            y="category",
+            orientation="h",
+            text="total_fraud_value"
+        )
+
+        fig.update_traces(
+            marker_color="#A8323E",
+            texttemplate="%{text:,.2s}",
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "Category: %{y}<br>"
+                "Fraud Value: ₹%{x:,.2f}"
+                "<extra></extra>"
+            )
+        )
+
+        fig.update_layout(
+            xaxis_title="Total Fraud Value (₹)",
+            yaxis_title="",
+            yaxis={
+                "categoryorder": "total ascending"
+            },
+            showlegend=False,
+            margin=dict(l=10, r=60, t=20, b=20)
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+    else:
+        st.info("No category fraud value data available.")
+
+    st.subheader("Fraud Percentage by State")
+
+    state_query = """
+    SELECT
+        state,
+        fraud_rate_percentage
+    FROM vw_geographic_analysis
+    ORDER BY fraud_rate_percentage DESC
+    LIMIT 10
+    """
+
+    state_data = run_query(state_query)
+
+    if not state_data.empty:
+        fig = px.bar(
+            state_data,
+            x="fraud_rate_percentage",
+            y="state",
+            orientation="h",
+            text="fraud_rate_percentage"
+        )
+
+        fig.update_traces(
+            marker_color="#A8323E",
+            texttemplate="%{text:.2f}",
+            textposition="outside",
+            cliponaxis=False,
+            hovertemplate=(
+                "State: %{y}<br>"
+                "Fraud Percentage: %{x:.2f}%"
+                "<extra></extra>"
+            )
+        )
+
+        fig.update_layout(
+            xaxis_title="Fraud Percentage (%)",
+            yaxis_title="",
+            yaxis={
+                "categoryorder": "total ascending"
+            },
+            showlegend=False,
+            margin=dict(l=10, r=50, t=20, b=20)
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+    else:
+        st.info("No state fraud data available.")
+
+
+
+
 
 elif page == "Temporal & Risk Analysis":
     st.header("Temporal & Risk Analysis")
