@@ -4,6 +4,7 @@
 from db import run_query
 import streamlit as st
 import plotly.express as px
+import pandas as pd
 
 # --------------------------------------------------
 # PAGE CONFIGURATION
@@ -216,153 +217,308 @@ elif page == "Fraud Analysis":
     st.header("Fraud Analysis")
     st.write("Category, geographic, and demographic fraud analysis.")
 
-    st.subheader("Fraud Percentage by Category")
-    category_query = """
-    SELECT
-        category,
-        fraud_rate_percentage
-    FROM vw_category_analysis
-    ORDER BY fraud_rate_percentage DESC
-    """
-    category_data = run_query(category_query)
-    if not category_data.empty:
-        fig = px.bar(
-            category_data,
-            x="fraud_rate_percentage",
-            y="category",
-            orientation="h",
-            text="fraud_rate_percentage"
-        )
-        fig.update_traces(
-            marker_color="#A8323E",
-            texttemplate="%{text:.1f}",
-            textposition="outside",
-            cliponaxis=False,
-            hovertemplate=(
-                "Category: %{y}<br>"
-                "Fraud Percentage: %{x:.2f}%"
-                "<extra></extra>"
+    col5, col6, col7 = st.columns(3)
+    with col5:
+        st.subheader("Fraud Percentage by Category")
+        category_query = """
+        SELECT
+            category,
+            fraud_rate_percentage
+        FROM vw_category_analysis
+        ORDER BY fraud_rate_percentage DESC
+        """
+        category_data = run_query(category_query)
+        if not category_data.empty:
+            fig = px.bar(
+                category_data,
+                x="fraud_rate_percentage",
+                y="category",
+                orientation="h",
+                text="fraud_rate_percentage"
             )
-        )
-        fig.update_layout(
-            xaxis_title="Fraud Percentage (%)",
-            yaxis_title="",
-            yaxis={
-                "categoryorder": "total ascending"
-            },
-            showlegend=False,
-            margin=dict(l=10, r=40, t=20, b=20)
-        )
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
-    else:
-        st.info("No category fraud data available.")
-
-    
-    st.subheader("Fraud Value by Category")
-
-    fraud_value_query = """
-    SELECT
-        category,
-        total_fraud_value
-    FROM vw_category_analysis
-    ORDER BY total_fraud_value DESC
-    """
-
-    fraud_value_data = run_query(fraud_value_query)
-
-    if not fraud_value_data.empty:
-        fig = px.bar(
-            fraud_value_data,
-            x="total_fraud_value",
-            y="category",
-            orientation="h",
-            text="total_fraud_value"
-        )
-
-        fig.update_traces(
-            marker_color="#A8323E",
-            texttemplate="%{text:,.2s}",
-            textposition="outside",
-            cliponaxis=False,
-            hovertemplate=(
-                "Category: %{y}<br>"
-                "Fraud Value: ₹%{x:,.2f}"
-                "<extra></extra>"
+            fig.update_traces(
+                marker_color="#A8323E",
+                texttemplate="%{text:.1f}",
+                textposition="outside",
+                cliponaxis=False,
+                hovertemplate=(
+                    "Category: %{y}<br>"
+                    "Fraud Percentage: %{x:.2f}%"
+                    "<extra></extra>"
+                )
             )
-        )
-
-        fig.update_layout(
-            xaxis_title="Total Fraud Value (₹)",
-            yaxis_title="",
-            yaxis={
-                "categoryorder": "total ascending"
-            },
-            showlegend=False,
-            margin=dict(l=10, r=60, t=20, b=20)
-        )
-
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
-    else:
-        st.info("No category fraud value data available.")
-
-    st.subheader("Fraud Percentage by State")
-
-    state_query = """
-    SELECT
-        state,
-        fraud_rate_percentage
-    FROM vw_geographic_analysis
-    ORDER BY fraud_rate_percentage DESC
-    LIMIT 10
-    """
-
-    state_data = run_query(state_query)
-
-    if not state_data.empty:
-        fig = px.bar(
-            state_data,
-            x="fraud_rate_percentage",
-            y="state",
-            orientation="h",
-            text="fraud_rate_percentage"
-        )
-
-        fig.update_traces(
-            marker_color="#A8323E",
-            texttemplate="%{text:.2f}",
-            textposition="outside",
-            cliponaxis=False,
-            hovertemplate=(
-                "State: %{y}<br>"
-                "Fraud Percentage: %{x:.2f}%"
-                "<extra></extra>"
+            fig.update_layout(
+                xaxis_title="Fraud Percentage (%)",
+                yaxis_title="",
+                yaxis={
+                    "categoryorder": "total ascending"
+                },
+                showlegend=False,
+                margin=dict(l=10, r=40, t=20, b=20)
             )
-        )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No category fraud data available.")
+    with col6:
+        st.subheader("Fraud Value by Category")
+        fraud_value_query = """
+        SELECT
+            category,
+            total_fraud_value
+        FROM vw_category_analysis
+        ORDER BY total_fraud_value DESC
+        """
+        fraud_value_data = run_query(fraud_value_query)
+        if not fraud_value_data.empty:
+            fig = px.bar(
+                fraud_value_data,
+                x="total_fraud_value",
+                y="category",
+                orientation="h",
+                text="total_fraud_value"
+            )
+            fig.update_traces(
+                marker_color="#A8323E",
+                texttemplate="%{text:,.2s}",
+                textposition="outside",
+                cliponaxis=False,
+                hovertemplate=(
+                    "Category: %{y}<br>"
+                    "Fraud Value: ₹%{x:,.2f}"
+                    "<extra></extra>"
+                )
+            )
+            fig.update_layout(
+                xaxis_title="Total Fraud Value (₹)",
+                yaxis_title="",
+                yaxis={
+                    "categoryorder": "total ascending"
+                },
+                showlegend=False,
+                margin=dict(l=10, r=60, t=20, b=20)
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No category fraud value data available.")
+    with col7:
+        st.subheader("Fraud Percentage by State")
+        state_query = """
+        SELECT
+            state,
+            fraud_rate_percentage
+        FROM vw_geographic_analysis
+        WHERE total_transactions >= 10000
+        ORDER BY fraud_rate_percentage DESC
+        LIMIT 10
+        """
+        state_data = run_query(state_query)
+        if not state_data.empty:
+            fig = px.bar(
+                state_data,
+                x="fraud_rate_percentage",
+                y="state",
+                orientation="h",
+                text="fraud_rate_percentage"
+            )
+            fig.update_traces(
+                marker_color="#A8323E",
+                texttemplate="%{text:.2f}",
+                textposition="outside",
+                cliponaxis=False,
+                hovertemplate=(
+                    "State: %{y}<br>"
+                    "Fraud Percentage: %{x:.2f}%"
+                    "<extra></extra>"
+                )
+            )
+            fig.update_layout(
+                xaxis_title="Fraud Percentage (%)",
+                yaxis_title="",
+                yaxis={
+                    "categoryorder": "total ascending"
+                },
+                showlegend=False,
+                margin=dict(l=10, r=50, t=20, b=20)
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No state fraud data available.")
 
-        fig.update_layout(
-            xaxis_title="Fraud Percentage (%)",
-            yaxis_title="",
-            yaxis={
-                "categoryorder": "total ascending"
-            },
-            showlegend=False,
-            margin=dict(l=10, r=50, t=20, b=20)
-        )
-
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
-    else:
-        st.info("No state fraud data available.")
-
-
+    col8, col9, col10 = st.columns(3)
+    with col8:
+        st.subheader("Fraud Transactions by Hour")
+        hourly_query = """
+        SELECT
+            transaction_hour,
+            fraud_transactions
+        FROM vw_hourly_fraud_analysis
+        ORDER BY transaction_hour
+        """
+        hourly_data = run_query(hourly_query)
+        if not hourly_data.empty:
+            fig = px.line(
+                hourly_data,
+                x="transaction_hour",
+                y="fraud_transactions",
+                markers=True
+            )
+            peak_hours = hourly_data[
+                hourly_data["fraud_transactions"] >= 2000
+            ]
+            fig.update_traces(
+                line=dict(color="#A8323E", width=3),
+                marker=dict(color="#A8323E", size=6),
+                customdata=hourly_data[["fraud_transactions"]],
+                hovertemplate=(
+                    "Hour: %{x}:00<br>"
+                    "Fraud Transactions: %{y:,}"
+                    "<extra></extra>"
+                )
+            )
+            fig.add_annotation(
+                x=22,
+                y=2481,
+                text="2,481",
+                showarrow=False,
+                xshift=-8,
+                yshift=14,
+                font=dict(size=11)
+            )
+            fig.add_annotation(
+                x=23,
+                y=2442,
+                text="2,442",
+                showarrow=False,
+                xshift=8,
+                yshift=-14,
+                font=dict(size=11)
+            )
+            fig.update_layout(
+                xaxis_title="Hour of Day (0–23)",
+                yaxis_title="Fraud Transactions",
+                xaxis=dict(
+                    tickmode="linear",
+                    tick0=0,
+                    dtick=2,
+                    range=[-0.5, 23.5]
+                ),
+                showlegend=False,
+                margin=dict(l=10, r=20, t=25, b=30)
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No hourly fraud data available.")
+    with col9:
+        st.subheader("Fraud Percentage by Gender")
+        gender_query = """
+        SELECT
+            gender,
+            fraud_rate_percentage
+        FROM vw_gender_analysis
+        ORDER BY gender
+        """
+        gender_data = run_query(gender_query)
+        if not gender_data.empty:
+            fig = px.pie(
+                gender_data,
+                names="gender",
+                values="fraud_rate_percentage",
+                hole=0.55,
+                color="gender",
+                color_discrete_map={
+                    "M": "#168BFA",
+                    "F": "#172FA8"
+                }
+            )
+            fig.update_traces(
+                texttemplate="%{value:.2f}%",
+                textposition="inside",
+                insidetextorientation="horizontal",
+                textfont=dict(size=12, color="white"),
+                hovertemplate=(
+                    "Gender: %{label}<br>"
+                    "Fraud Rate: %{value:.2f}%"
+                    "<extra></extra>"
+                )
+            )
+            fig.update_layout(
+                showlegend=True,
+                legend_title_text="Gender",
+                margin=dict(l=10, r=10, t=20, b=20)
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No gender fraud data available.")
+    with col10:
+        st.subheader("Fraud Transactions by Day")
+        daily_query = """
+        SELECT
+            transaction_day,
+            fraud_transactions
+        FROM vw_daily_fraud_analysis
+        """
+        daily_data = run_query(daily_query)
+        if not daily_data.empty:
+            day_order = [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            ]
+            daily_data["transaction_day"] = pd.Categorical(
+                daily_data["transaction_day"],
+                categories=day_order,
+                ordered=True
+            )
+            daily_data = daily_data.sort_values("transaction_day")
+            fig = px.line(
+                daily_data,
+                x="transaction_day",
+                y="fraud_transactions",
+                markers=True,
+                text="fraud_transactions"
+            )
+            fig.update_traces(
+                line=dict(color="#A8323E", width=3),
+                marker=dict(color="#A8323E", size=7),
+                texttemplate="%{text:,}",
+                textposition="top center",
+                hovertemplate=(
+                    "Day: %{x}<br>"
+                    "Fraud Transactions: %{y:,}"
+                    "<extra></extra>"
+                )
+            )
+            fig.update_layout(
+                xaxis_title="Day",
+                yaxis_title="Fraud Transactions",
+                showlegend=False,
+                margin=dict(l=10, r=10, t=30, b=30)
+            )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No daily fraud data available.")
 
 
 
